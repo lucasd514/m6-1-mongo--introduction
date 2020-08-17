@@ -59,4 +59,48 @@ const getGreeting = async (req, res) => {
   });
 };
 
-module.exports = { getGreeting, createGreeting };
+const newFunction = async (req, res) => {
+  const client = await MongoClient(MONGO_URI, options);
+  const start = req.query.start;
+  const end = req.query.limit;
+  console.log(start, end);
+  await client.connect();
+  const db = client.db("exercise_1");
+  const allGreetings = await db.collection("greetings").find().toArray();
+
+  if (allGreetings.length > 25 && start && end) {
+    res
+      .status(200)
+      .json({ status: 200, theseAreAllOfThem: allGreetings.slice(start, end) });
+    console.log("this starts at:", start, "and ends at:", end);
+    client.close();
+  }
+  if (allGreetings.length > 25 && start) {
+    const localEnd = start + 25;
+    res.status(200).json({
+      status: 200,
+      theseAreAllOfThem: allGreetings.slice(start, localEnd),
+    });
+    console.log("this starts at:", start, "and ends at:", localEnd);
+    client.close();
+  }
+  if (allGreetings.length > 25 && end) {
+    res.status(200).json({
+      status: 200,
+      theseAreAllOfThem: allGreetings.slice(0, end),
+    });
+    console.log("and ends at:", end);
+    client.close();
+  }
+  if (allGreetings.length > 25 && start + end > allGreetings.length) {
+    const lastTen = allGreetings.length - 10;
+
+    res.status(200).json({
+      status: 200,
+      theseAreAllOfThem: allGreetings.slice(lastTen, allGreetings.length),
+    });
+    console.log("too much");
+    client.close();
+  }
+};
+module.exports = { getGreeting, createGreeting, newFunction };
