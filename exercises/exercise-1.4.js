@@ -7,10 +7,15 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const getUsers = async (req, res) => {
+const addUser = async (req, res) => {
   const client = await MongoClient(MONGO_URI, options);
+  const { name } = req.body;
+
   await client.connect();
+
   const db = client.db("exercise_1");
+
+  await db.collection("users").insertOne({ name });
   const users = await db.collection("users").find().toArray();
   if (users === []) {
     res.status(404);
@@ -21,4 +26,4 @@ const getUsers = async (req, res) => {
   client.close();
 };
 
-module.exports = { getUsers };
+module.exports = { addUser };
