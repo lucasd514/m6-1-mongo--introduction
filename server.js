@@ -10,6 +10,7 @@ const {
   getGreeting,
   newFunction,
   deleteGreeting,
+  updateGreeting,
 } = require("./exercises/exercise-2");
 
 const PORT = process.env.PORT || 8000;
@@ -26,6 +27,7 @@ express()
   .get("/greeting/:id", getGreeting)
   .get("/allgreetings", newFunction)
   .delete("/greeting/:id", deleteGreeting)
+  .put("/greeting/:_id", updateGreeting)
   .post("/addUserInfo", addUser)
   .post("/addGreeting", createGreeting)
   // exercise 2
